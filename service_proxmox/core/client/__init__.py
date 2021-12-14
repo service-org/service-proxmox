@@ -101,13 +101,14 @@ class ProxmoxClient(BaseClient):
 
         @return: None
         """
-        logger.debug(f'start fetch ticket and csrf_token...')
+        logger.debug(f'start fetch pwdauth ticket and csrf_token...')
         if self._password_auth_birth_time is None:
+            logger.debug(f'pwdauth ticket and csrf_token was empty, start fetching')
             self._password_auth_auth_ticket, self._password_auth_csrf_token = self.get_pwdauth()
-            logger.debug(f'got ticket={self._password_auth_auth_ticket} csrf_token={self._password_auth_csrf_token}')
         if time.time() - self._password_auth_birth_time >= self._password_auth_renew_age:
+            logger.debug(f'pwdauth ticket and csrf_token has expired, auto refresh')
             self._password_auth_auth_ticket, self._password_auth_csrf_token = self.get_pwdauth()
-            logger.debug(f'got ticket={self._password_auth_auth_ticket} csrf_token={self._password_auth_csrf_token}')
+        logger.debug(f'ticket={self._password_auth_auth_ticket} csrf_token={self._password_auth_csrf_token}')
 
     def get_cookies(self) -> t.Text:
         """ 获取cookie
@@ -116,7 +117,7 @@ class ProxmoxClient(BaseClient):
         """
         cookie_name = f'{self.product}AuthCookie'
         cookie_data = self._password_auth_auth_ticket
-        logger.debug(f'got cookies={cookie_name}={cookie_data}')
+        logger.debug(f'cookies={cookie_name}={cookie_data}')
         return f'{cookie_name}={cookie_data}'
 
     def request(self, method: t.Text, url: t.Text, **kwargs: t.Any) -> t.Any:
