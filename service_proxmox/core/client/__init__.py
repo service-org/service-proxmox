@@ -101,7 +101,6 @@ class ProxmoxClient(BaseClient):
 
         @return: None
         """
-        logger.debug(f'start fetch pwdauth ticket and csrf_token...')
         if self._password_auth_birth_time is None:
             logger.debug(f'pwdauth ticket and csrf_token was empty, start fetching')
             self._password_auth_auth_ticket, self._password_auth_csrf_token = self.get_pwdauth()
